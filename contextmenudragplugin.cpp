@@ -14,8 +14,8 @@ namespace KWin {
     class ContextMenuDragFilter : public InputEventFilter
     {
     public:
-        // Provide the required InputFilterOrder
-        ContextMenuDragFilter() : InputEventFilter(InputEventFilter::Order::Default) {}
+        // Use an existing order value – InputMethod places us after the input‑method filter
+        ContextMenuDragFilter() : InputEventFilter(InputFilterOrder::Order::InputMethod) {}
 
         bool pointerButton(PointerButtonEvent *event) override
         {
@@ -41,7 +41,7 @@ namespace KWin {
             return false;
         }
 
-        bool pointerMotion(PointerMotionEvent *event) override
+        bool pointerMotion(PointerMotionEvent * /*event*/) override
         {
             if (m_isWithholding) {
                 qreal distance = QLineF(m_pressPos, input()->globalPointer()).length();
@@ -77,7 +77,6 @@ namespace KWin {
 
 } // namespace KWin
 
-// Correct plugin factory registration
 K_PLUGIN_FACTORY_WITH_JSON(ContextMenuDragPluginFactory, "metadata.json",
                            registerPlugin<KWin::ContextMenuDragPlugin>();
 )

@@ -11,7 +11,8 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui)
+# Add Widgets to satisfy KWin's dependency
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(KF6 REQUIRED COMPONENTS CoreAddons Config)
 find_package(KWin REQUIRED)
 
@@ -19,7 +20,8 @@ find_package(KWin REQUIRED)
 add_compile_definitions(KWIN_EFFECT_API_MAKE_EXPORT_TREATMENT_HAPPIER)
 
 add_library(kwin_contextmenudrag MODULE contextmenudragplugin.cpp)
-target_link_libraries(kwin_contextmenudrag PRIVATE Qt6::Gui KF6::CoreAddons KF6::ConfigCore KWin)
+# Use the imported target KWin::kwin (note the lowercase 'kwin')
+target_link_libraries(kwin_contextmenudrag PRIVATE Qt6::Gui KF6::CoreAddons KF6::ConfigCore KWin::kwin)
 set_target_properties(kwin_contextmenudrag PROPERTIES PREFIX "")
 
 # Explicitly locate and link the KWin include directory
@@ -33,3 +35,10 @@ endif()
 # Install directly to your system's default KWin binary plugin subdirectory
 install(FILES metadata.json DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/plugins)
 install(TARGETS kwin_contextmenudrag DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/plugins)
+
+set(CPACK_PACKAGE_NAME "kwin-plugin-clickdragrelease")
+set(CPACK_PACKAGE_VENDOR "Neptune")
+set(CPACK_PACKAGE_VERSION "0.1.0")
+set(CPACK_GENERATOR "RPM")
+
+include(CPack)
