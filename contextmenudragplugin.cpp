@@ -77,7 +77,7 @@ namespace KWin {
 
 } // namespace KWin
 
-K_PLUGIN_FACTORY_WITH_JSON(ContextMenuDragPluginFactory, "metadata.json",
+K_PLUGIN_FACTORY_WITH_JSON(ContextMenuDragPluginFactory, "kwin_contextmenudrag.json",
                            registerPlugin<KWin::ContextMenuDragPlugin>();
 )
 
