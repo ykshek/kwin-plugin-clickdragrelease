@@ -43,12 +43,12 @@ else()
 endif()
 
 # Install directly to your system's default KWin binary plugin subdirectory
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwin_contextmenudrag.json DESTINATION /usr/lib64/qt6/plugins/kwin/plugins)
+# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwin_contextmenudrag.json DESTINATION /usr/lib64/qt6/plugins/kwin/plugins)
 install(TARGETS kwin_contextmenudrag DESTINATION /usr/lib64/qt6/plugins/kwin/plugins)
 
 set(CPACK_PACKAGE_NAME "kwin-plugin-clickdragrelease")
 set(CPACK_PACKAGE_VENDOR "Neptune")
-set(CPACK_PACKAGE_VERSION "0.1.2")
+set(CPACK_PACKAGE_VERSION "0.1.4")
 set(CPACK_GENERATOR "RPM")
 
 include(CPack)

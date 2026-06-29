@@ -1,12 +1,13 @@
 {
     "KPlugin": {
-        "Id": "kwin_contextmenudrag",
-        "Name": "Context Menu Drag Filter Plugin",
+        "Category": "Input",
         "Description": "Withholds right-click upstrokes until release to be more similar to behavior on Windows.",
         "Version": "@KWin_VERSION@",
-        "Category": "Input",
-        "License": "GPLv3",
+        "Name": "Context Menu Drag Filter Plugin",
         "EnabledByDefault": true,
-        "ServiceTypes": ["KWin/Plugin"]
+        "License": "GPL",
+        "ServiceTypes": [
+            "KWin/Plugin"
+        ]
     }
 }
