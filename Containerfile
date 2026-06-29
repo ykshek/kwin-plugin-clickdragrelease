@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora:latest
+FROM quay.io/fedora/fedora:44
 
 LABEL description="Development environment for clickdragrelease KDE plugin"
 LABEL maintainer="Alex Shek <hms.starryfish@gmail.com>"

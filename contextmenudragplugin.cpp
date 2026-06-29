@@ -15,7 +15,10 @@ namespace KWin {
     {
     public:
         // Use an existing order value – InputMethod places us after the input‑method filter
-        ContextMenuDragFilter() : InputEventFilter(InputFilterOrder::Order::InputMethod) {}
+        explicit ContextMenuDragFilter(InputRedirection* inputRedirection)
+            : InputEventFilter(InputFilterOrder::Order::InputMethod)
+            , m_inputRedirection(inputRedirection)
+        {}
 
         bool pointerButton(PointerButtonEvent *event) override
         {
@@ -24,7 +27,7 @@ namespace KWin {
 
             if (event->state == PointerButtonState::Pressed) {
                 m_delayedPressEvent = *event;
-                m_pressPos = input()->globalPointer();
+                m_pressPos = m_inputRedirection->globalPointer();
                 m_isWithholding = true;
                 return true;
             }
@@ -34,7 +37,7 @@ namespace KWin {
                     m_isWithholding = false;
                     m_delayedPressEvent.timestamp = event->timestamp;
                     QScopedValueRollback<bool> injectionGuard(m_isInjecting, true);
-                    input()->processFilters(&InputEventFilter::pointerButton, &m_delayedPressEvent);
+                    m_inputRedirection->processFilters(&InputEventFilter::pointerButton, &m_delayedPressEvent);
                 }
                 return false;
             }
@@ -44,7 +47,7 @@ namespace KWin {
         bool pointerMotion(PointerMotionEvent * /*event*/) override
         {
             if (m_isWithholding) {
-                qreal distance = QLineF(m_pressPos, input()->globalPointer()).length();
+                qreal distance = QLineF(m_pressPos, m_inputRedirection->globalPointer()).length();
                 if (distance > QGuiApplication::styleHints()->startDragDistance()) {
                     m_isWithholding = false;
                 }
@@ -53,6 +56,7 @@ namespace KWin {
         }
 
     private:
+        InputRedirection* m_inputRedirection;
         bool m_isWithholding = false;
         bool m_isInjecting = false;
         PointerButtonEvent m_delayedPressEvent;
@@ -66,9 +70,9 @@ namespace KWin {
         explicit ContextMenuDragPlugin(QObject *parent, const QVariantList &args)
         : Plugin()
         {
-            Q_UNUSED(parent); Q_UNUSED(args);
-            m_filter = std::make_unique<ContextMenuDragFilter>();
-            input()->installInputEventFilter(m_filter.get());
+            auto inputRedirection = InputRedirection::self();
+            m_filter = std::make_unique<ContextMenuDragFilter>(inputRedirection);
+            inputRedirection->installInputEventFilter(m_filter.get());
         }
 
     private:
