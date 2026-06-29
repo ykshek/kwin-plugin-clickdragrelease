@@ -56,7 +56,7 @@ install(TARGETS kwin_contextmenudrag DESTINATION /usr/lib64/qt6/plugins/kwin/plu
 
 set(CPACK_PACKAGE_NAME "kwin-plugin-clickdragrelease")
 set(CPACK_PACKAGE_VENDOR "Neptune")
-set(CPACK_PACKAGE_VERSION "0.2.0")
+set(CPACK_PACKAGE_VERSION "0.3.0")
 set(CPACK_GENERATOR "RPM")
 
 include(CPack)
