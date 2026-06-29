@@ -7,7 +7,7 @@
         "EnabledByDefault": true,
         "License": "GPL",
         "ServiceTypes": [
-            "KWin/Plugin"
+            "KWin/InputEventFilter"
         ]
     }
 }

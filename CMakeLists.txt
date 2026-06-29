@@ -26,6 +26,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/kwin_contextmenudrag.json.in
                )
 
 add_library(kwin_contextmenudrag MODULE contextmenudragplugin.cpp)
+# Enable AUTOMOC to process the Q_OBJECT and K_PLUGIN_FACTORY macros
+set_target_properties(kwin_contextmenudrag PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    AUTOUIC ON
+)
 
 # Ensure the compiler can find the generated kwin_contextmenudrag.json
 target_include_directories(kwin_contextmenudrag PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
@@ -48,7 +54,7 @@ install(TARGETS kwin_contextmenudrag DESTINATION /usr/lib64/qt6/plugins/kwin/plu
 
 set(CPACK_PACKAGE_NAME "kwin-plugin-clickdragrelease")
 set(CPACK_PACKAGE_VENDOR "Neptune")
-set(CPACK_PACKAGE_VERSION "0.1.4")
+set(CPACK_PACKAGE_VERSION "0.1.6")
 set(CPACK_GENERATOR "RPM")
 
 include(CPack)

@@ -1,0 +1,3 @@
+# I cannot figure out how to make this plugin work
+
+I'll just try to make a patched Kwin version instead on the COPR...
