@@ -11,26 +11,20 @@
 
 namespace KWin {
 
-    class ContextMenuDragFilter : public Plugin, public InputEventFilter
+    class ContextMenuDragFilter : public InputEventFilter
     {
-        Q_OBJECT
     public:
-        explicit ContextMenuDragPlugin(QObject *parent, const QVariantList &args)
-        : Plugin()
-        // Initialize the filter order using the public InputFilterOrder enum
-        , InputEventFilter(InputFilterOrder::Order::InputMethod)
-        {
-            Q_UNUSED(parent);
-            Q_UNUSED(args);
-        }
+        explicit ContextMenuDragFilter() : InputEventFilter(InputFilterOrder::Order::InputMethod) {}
 
         bool pointerButton(PointerButtonEvent *event) override
         {
+            if (m_isInjecting) return false;
             if (event->button != Qt::RightButton) return false;
 
             if (event->state == PointerButtonState::Pressed) {
                 m_delayedPressEvent = *event;
-                m_pressPos = event->pos();
+                // Use globalPos() provided by the event or input singleton
+                m_pressPos = event->position;
                 m_isWithholding = true;
                 return true;
             }
@@ -38,16 +32,19 @@ namespace KWin {
             if (event->state == PointerButtonState::Released) {
                 if (m_isWithholding) {
                     m_isWithholding = false;
+                    m_delayedPressEvent.timestamp = event->timestamp;
+                    QScopedValueRollback<bool> injectionGuard(m_isInjecting, true);
+                    input()->processFilters(&InputEventFilter::pointerButton, &m_delayedPressEvent);
                 }
                 return false;
             }
             return false;
         }
 
-        bool pointerMotion(PointerMotionEvent * /*event*/) override
+        bool pointerMotion(PointerMotionEvent *event) override
         {
             if (m_isWithholding) {
-                qreal distance = QLineF(m_pressPos, event->pos()).length();
+                qreal distance = QLineF(m_pressPos, event->position).length();
                 if (distance > QGuiApplication::styleHints()->startDragDistance()) {
                     m_isWithholding = false;
                 }
@@ -57,8 +54,26 @@ namespace KWin {
 
     private:
         bool m_isWithholding = false;
+        bool m_isInjecting = false;
         PointerButtonEvent m_delayedPressEvent;
         QPointF m_pressPos;
+    };
+
+    // Ensure this class is in the namespace, NOT inside ContextMenuDragFilter
+    class ContextMenuDragPlugin : public Plugin
+    {
+        Q_OBJECT
+    public:
+        explicit ContextMenuDragPlugin(QObject *parent, const QVariantList &args)
+        : Plugin()
+        {
+            Q_UNUSED(parent); Q_UNUSED(args);
+            m_filter = std::make_unique<ContextMenuDragFilter>();
+            input()->installInputEventFilter(m_filter.get());
+        }
+
+    private:
+        std::unique_ptr<ContextMenuDragFilter> m_filter;
     };
 
 } // namespace KWin
