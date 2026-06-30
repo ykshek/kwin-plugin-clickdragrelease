@@ -17,7 +17,7 @@ class ContextMenuDragFilter : public InputEventFilter
 {
 public:
     explicit ContextMenuDragFilter()
-        : InputEventFilter(InputFilterOrder::InputMethod)
+        : InputEventFilter(InputFilterOrder::Order::InputMethod)
     {
     }
 
@@ -78,20 +78,14 @@ class ContextMenuDragPlugin : public Plugin
 {
     Q_OBJECT
 public:
-    // KF6/KWin 6 constructor signature: use KPluginMetaData
-    explicit ContextMenuDragPlugin(QObject *parent, const KPluginMetaData &metaData)
-        : Plugin(parent, metaData)
+    // Use the QVariantList constructor signature expected by this KWin version
+    explicit ContextMenuDragPlugin(QObject *parent, const QVariantList &args)
+        : Plugin()
     {
+        Q_UNUSED(parent);
+        Q_UNUSED(args);
         m_filter = std::make_unique<ContextMenuDragFilter>();
         input()->installInputEventFilter(m_filter.get());
-    }
-
-    ~ContextMenuDragPlugin() override
-    {
-        if (m_filter) {
-            input()->removeInputEventFilter(m_filter.get());
-            m_filter.reset();
-        }
     }
 
 private:
