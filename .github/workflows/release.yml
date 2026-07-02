@@ -107,17 +107,17 @@ jobs:
 
         ## Installation (Fedora 44)
 
-        ```bash
+        \`\`\`bash
         sudo dnf install kwin-plugin-clickdragrelease
-        ```
+        \`\`\`
 
         ## Verification
 
         Verify the integrity of downloaded files:
 
-        ```bash
+        \`\`\`bash
         sha256sum -c SHA256SUMS
-        ```
+        \`\`\`
         EOF
 
     - name: Upload release artifacts
@@ -128,3 +128,9 @@ jobs:
           release-artifacts/
           release_notes.md
         retention-days: 7
+    - name: Update latest tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -f latest
+        git push origin latest --force
