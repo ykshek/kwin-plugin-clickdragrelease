@@ -30,8 +30,8 @@ rpm: build
     # Create RPM build structure
     mkdir -p rpmbuild/{SOURCES,SPECS,BUILD,RPMS,SRPMS}
 
-    # Extract version from CMakeLists.txt (CPACK_PACKAGE_VERSION) or fallback to 0.1.0
-    VERSION=$(grep -E 'CPACK_PACKAGE_VERSION' CMakeLists.txt | sed -E 's/.*"(.*)".*/\1/' || echo "0.1.0")
+    # Extract version from kwin_contextmenudrag.json or fallback to 0.1.0
+    VERSION=$(grep '"Version":' kwin_contextmenudrag.json | sed -E 's/.*"Version": "([^"]+)".*/\1/' || echo "1.0.0")
 
     # Create source tarball matching %autosetup layout
     echo "Creating source tarball v${VERSION}..."
@@ -83,26 +83,27 @@ bump-version version:
         exit 1
     fi
 
-    # Update CMakeLists.txt CPACK_PACKAGE_VERSION
-    echo "Updating version in CMakeLists.txt (CPACK_PACKAGE_VERSION)..."
-    sed -i -E \"s/(set\\(CPACK_PACKAGE_VERSION\\s+\\\")[^\"]+(\\\"\\))/\\1$VERSION\\2/\" CMakeLists.txt
+    # Update version in kwin_contextmenudrag.json
+    echo "Updating version in kwin_contextmenudrag.json..."
+    sed -i "s/\"Version\": \"[^\"]*\"/\"Version\": \"$VERSION\"/" kwin_contextmenudrag.json
 
     # Update version in spec file
     echo "Updating version in kwin-plugin-clickdragrelease.spec..."
-    sed -i -E \"s/^Version:.*/Version:        $VERSION/\" kwin-plugin-clickdragrelease.spec
+    sed -i "s/^Version:.*/Version:        $VERSION/" kwin-plugin-clickdragrelease.spec
 
     # Verify changes
-    if ! grep -q \"CPACK_PACKAGE_VERSION \"$VERSION\"\" CMakeLists.txt; then
-        echo "Error: Failed to update CPACK_PACKAGE_VERSION in CMakeLists.txt"
+    if ! grep -q "\"Version\": \"$VERSION\"" kwin_contextmenudrag.json; then
+        echo "Error: Failed to update version in kwin_contextmenudrag.json"
         exit 1
     fi
-    if ! grep -q \"^Version:[[:space:]]*$VERSION\" kwin-plugin-clickdragrelease.spec; then
+    if ! grep -q "^Version:[[:space:]]*$VERSION" kwin-plugin-clickdragrelease.spec; then
         echo "Error: Failed to update Version in kwin-plugin-clickdragrelease.spec"
         exit 1
     fi
 
     echo "Version updated successfully in CMakeLists.txt and spec file."
-    git add CMakeLists.txt kwin-plugin-clickdragrelease.spec
+    git diff kwin_contextmenudrag.json kwin-plugin-clickdragrelease.spec
+    git add kwin_contextmenudrag.json kwin-plugin-clickdragrelease.spec
     git commit -m "chore: bump version to v$VERSION"
 
 commit version:
