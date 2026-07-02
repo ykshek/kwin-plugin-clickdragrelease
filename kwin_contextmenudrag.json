@@ -2,7 +2,7 @@
     "KPlugin": {
         "Category": "Input",
         "Description": "Withholds right-click upstrokes until release to be more similar to behavior on Windows.",
-        "Version": "0.4.2",
+        "Version": "0.4.3",
         "Name": "Context Menu Drag Filter Plugin",
         "EnabledByDefault": true,
         "License": "GPLv3+",

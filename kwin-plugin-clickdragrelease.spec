@@ -1,5 +1,5 @@
 Name:           kwin-plugin-clickdragrelease
-Version:        0.4.2
+Version:        0.4.3
 Release:        1%{?dist}
 Summary:        KWin plugin to disable click-drag-release behavior on KDE
 
