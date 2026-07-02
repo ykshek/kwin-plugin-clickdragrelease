@@ -11,36 +11,18 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-# Add Widgets to satisfy KWin's dependency
+# KWin's dependency
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(KF6 REQUIRED COMPONENTS CoreAddons Config)
 find_package(KWin REQUIRED)
 
 # Compile the plugin binary using KWin internal private header rules
 add_compile_definitions(KWIN_EFFECT_API_MAKE_EXPORT_TREATMENT_HAPPIER)
-
-# Automatically generate the JSON with the system's KWin version
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/kwin_contextmenudrag.json.in
-               ${CMAKE_CURRENT_BINARY_DIR}/kwin_contextmenudrag.json
-               @ONLY
-               )
-set_property(SOURCE contextmenudragplugin.cpp APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/kwin_contextmenudrag.json)
-
 add_library(kwin_contextmenudrag MODULE contextmenudragplugin.cpp)
-# Enable AUTOMOC to process the Q_OBJECT and K_PLUGIN_FACTORY macros
-set_target_properties(kwin_contextmenudrag PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
-)
 
 # Ensure the compiler can find the generated kwin_contextmenudrag.json
 target_include_directories(kwin_contextmenudrag PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-
-# Use the imported target KWin::kwin (note the lowercase 'kwin')
 target_link_libraries(kwin_contextmenudrag PRIVATE Qt6::Gui KF6::CoreAddons KF6::ConfigCore KWin::kwin)
-target_link_options(kwin_contextmenudrag PRIVATE "-Wl,-z,lazy")
-set_target_properties(kwin_contextmenudrag PROPERTIES PREFIX "")
 
 # Explicitly locate and link the KWin include directory
 find_path(KWIN_ACTUAL_INCLUDE_DIR NAMES kwin_export.h PATH_SUFFIXES kwin)
@@ -49,17 +31,4 @@ if (KWIN_ACTUAL_INCLUDE_DIR)
 else()
     message(FATAL_ERROR "Could not find KWin headers. Is kwin-devel fully installed?")
 endif()
-
-# Install directly to your system's default KWin binary plugin subdirectory
-# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwin_contextmenudrag.json DESTINATION /usr/lib64/qt6/plugins/kwin/plugins)
 install(TARGETS kwin_contextmenudrag DESTINATION /usr/lib64/qt6/plugins/kwin/plugins)
-add_executable(plugin_tester tools/plugin_tester.cpp)
-set_target_properties(plugin_tester PROPERTIES AUTOMOC ON)
-target_link_libraries(plugin_tester PRIVATE KF6::CoreAddons Qt6::Core)
-
-set(CPACK_PACKAGE_NAME "kwin-plugin-clickdragrelease")
-set(CPACK_PACKAGE_VENDOR "Alex Shek")
-set(CPACK_PACKAGE_VERSION "0.4.0")
-set(CPACK_GENERATOR "RPM")
-
-include(CPack)
