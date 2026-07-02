@@ -78,15 +78,14 @@ class ContextMenuDragPlugin : public Plugin
 {
     Q_OBJECT
 public:
-    // Use the QVariantList constructor signature expected by this KWin version
-    explicit ContextMenuDragPlugin(QObject *parent, const QVariantList &args)
-        : Plugin()
+    // Provide a default constructor so PluginFactory::create() can instantiate it
+    explicit ContextMenuDragPlugin() : Plugin()
     {
-        Q_UNUSED(parent);
-        Q_UNUSED(args);
         m_filter = std::make_unique<ContextMenuDragFilter>();
         input()->installInputEventFilter(m_filter.get());
     }
+
+    ~ContextMenuDragPlugin() override = default;
 
 private:
     std::unique_ptr<ContextMenuDragFilter> m_filter;
@@ -94,8 +93,17 @@ private:
 
 } // namespace KWin
 
-K_PLUGIN_FACTORY_WITH_JSON(ContextMenuDragPluginFactory, "kwin_contextmenudrag.json",
-                           registerPlugin<KWin::ContextMenuDragPlugin>();
-)
+class KWIN_EXPORT ContextMenuDragPluginFactory : public KWin::PluginFactory
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID PluginFactory_iid FILE "kwin_contextmenudrag.json")
+    Q_INTERFACES(KWin::PluginFactory)
+
+public:
+    std::unique_ptr<KWin::Plugin> create() const override
+    {
+        return std::make_unique<KWin::ContextMenuDragPlugin>();
+    }
+};
 
 #include "contextmenudragplugin.moc"
