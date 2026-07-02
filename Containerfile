@@ -20,11 +20,8 @@ RUN dnf5 update -y && \
         kf6-krunner-devel \
         kf6-ki18n-devel \
         kf6-kcoreaddons-devel \
-        kf6-kdbusaddons  \
         # Qt6 development packages
         qt6-qtbase-devel \
-        dbus-tools \
-        yaml-cpp-devel \
         # Kwin development packages
         kwin-devel \
         # Translation tools
@@ -32,7 +29,6 @@ RUN dnf5 update -y && \
         # Development utilities
         sudo \
         vim \
-        extra-cmake-modules \
         && dnf5 build-dep -y kwin \
         && dnf5 clean all
 
