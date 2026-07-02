@@ -1,3 +1,3 @@
-# I cannot figure out how to make this plugin work
+# This works now
 
-I'll just try to make a patched Kwin version instead on the COPR...
+TODO: make a COPR release and potentially cleanup some stuff
