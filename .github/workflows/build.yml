@@ -56,7 +56,7 @@ jobs:
 
         # Create source tarball with valid RPM version (no hyphens)
         VERSION=$(grep '^Version:' kwin-plugin-clickdragrelease.spec | awk '{print $2}')
-        git archive --format=tar.gz --prefix=v${VERSION}/ HEAD > rpmbuild/SOURCES/v${VERSION}.tar.gz
+        git archive --format=tar.gz --prefix=v${VERSION}/ HEAD > rpmbuild/SOURCES/kwin-plugin-clickdragrelease-${VERSION}.tar.gz
 
         # Copy spec file
         cp kwin-plugin-clickdragrelease.spec rpmbuild/SPECS/
