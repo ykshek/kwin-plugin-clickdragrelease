@@ -107,18 +107,30 @@ jobs:
 
         ## Installation (Fedora 44)
 
-        ```bash
+        \`\`\`bash
         sudo dnf install kwin-plugin-clickdragrelease
-        ```
+        \`\`\`
 
         ## Verification
 
         Verify the integrity of downloaded files:
 
-        ```bash
+        \`\`\`bash
         sha256sum -c SHA256SUMS
-        ```
+        \`\`\`
         EOF
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
+      with:
+        tag_name: ${{ steps.vars.outputs.tag }}
+        name: ${{ steps.vars.outputs.release_name }}
+        body_path: release_notes.md
+        files: |
+          release-artifacts/*.rpm
+          release-artifacts/SHA256SUMS
+        draft: false
+        prerelease: false
 
     - name: Upload release artifacts
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
@@ -128,3 +140,10 @@ jobs:
           release-artifacts/
           release_notes.md
         retention-days: 7
+
+    - name: Update latest tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -f latest
+        git push origin latest --force
