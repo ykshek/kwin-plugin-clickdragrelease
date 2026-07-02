@@ -5,7 +5,7 @@ Summary:        KWin plugin to disable click-drag-release behavior on KDE
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/ykshek/kwin-plugin-clickdragrelease
-Source0:        v%{version}.tar.gz
+Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
@@ -24,7 +24,7 @@ Requires:       qt6-qtbase
 A small KWin plugin that disables the default click-drag-release behavior in KDE's KWin.
 
 %prep
-%autosetup -n v%{version}
+%autosetup
 
 %build
 %cmake \
@@ -37,7 +37,7 @@ A small KWin plugin that disables the default click-drag-release behavior in KDE
 
 %check
 # Basic smoke test - ensure the plugin binary was installed into the expected plugin dir
-test -f %{buildroot}%{_libdir}/qt6/plugins/kwin/plugins/kwin_contextmenudrag.so || true
+test -f %{buildroot}%{_libdir}/qt6/plugins/kwin/plugins/kwin_contextmenudrag.so
 
 %files
 %license LICENSE
@@ -45,5 +45,14 @@ test -f %{buildroot}%{_libdir}/qt6/plugins/kwin/plugins/kwin_contextmenudrag.so 
 %{_libdir}/qt6/plugins/kwin/plugins/kwin_contextmenudrag.so
 
 %changelog
+* Thu Jul 02 2026 Alex Shek <hms.starryfish@gmail.com> - 0.4.3-1
+- Bump for build changes.
+
+* Thu Jul 02 2026 Alex Shek <hms.starryfish@gmail.com> - 0.4.2-1
+- Bump to overwrite local install.
+
+* Thu Jul 02 2026 Alex Shek <hms.starryfish@gmail.com> - 0.4.1-1
+- Bump to test release triggers.
+
 * Thu Jul 02 2026 Alex Shek <hms.starryfish@gmail.com> - 0.4.0-1
 - Initial RPM spec for kwin-plugin-clickdragrelease.
